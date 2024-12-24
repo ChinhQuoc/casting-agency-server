@@ -32,6 +32,8 @@ phases:
       - wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add
       - wget -qO - https://apt.corretto.aws/corretto.key | apt-key add
       - apt-get update && apt-get -y install jq  && pip install --upgrade awscli pytest
+      - pip install --upgrade pip
+      - pip install pyopenssl==23.2.0 cryptography==41.0.3 awscli pytest
   pre_build:
     commands:
       - TAG="$REPOSITORY_NAME.$REPOSITORY_BRANCH.$ENVIRONMENT_NAME.$(date +%Y-%m-%d.%H.%M.%S).$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)"
