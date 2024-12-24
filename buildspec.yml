@@ -18,18 +18,18 @@ phases:
     runtime-versions:
       python: 3.12
     commands:
-      - echo Installing dependencies...
+      - echo "Installing dependencies..."
       - pip install -r requirements.txt
   pre_build:
     commands:
-      - echo Running pre-build phase...
-      - python -m unittest test.py
+      - echo "Running pre-build phase..."
+      - python -m unittest discover -s tests -p "test*.py"
   build:
     commands:
-      - echo Build phase: No additional build commands required
+      - echo "Build phase: No additional build commands required"
   post_build:
     commands:
-      - echo Post-build phase: No additional steps required
+      - echo "Post-build phase: No additional steps required"
 
 artifacts:
   files:
