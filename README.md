@@ -104,10 +104,10 @@ python run.py
 
 - Get a specific movie identified by its unique id.
 - URL Parameters:
-  - `id`: An integer representing the unique identifier of the question to be deleted.
+  - `id`: An integer representing the unique identifier of the movie to be deleted.
 - Returns: An object with the following keys:
   - `success`: A boolean indicating the request status.
-  - `movie`: A object movie and along with the corresponding actor list, each containing `id`, `releaseDate`, `title`, and `name`.
+  - `movie`: A object movie and along with the corresponding actor list, each containing `id`, `releaseDate`, `title`, and a list of `actors`.
 
 ```json
 {
@@ -131,5 +131,90 @@ python run.py
     "title": "ggi uu kiguf"
   },
   "success": true
+}
+```
+
+`GET '/actors/<int:id>'`
+
+- Get a specific actor identified by its unique id.
+- URL Parameters:
+  - `id`: An integer representing the unique identifier of the actor to be deleted.
+- Returns: An object with the following keys:
+  - `success`: A boolean indicating the request status.
+  - `actor`: A object actor and along with the corresponding actor list, each containing `id`, `age`, `gender`, `name` and a list of `movies`.
+
+```json
+{
+  "actor": {
+    "age": 13,
+    "gender": "male",
+    "id": 4,
+    "movies": [
+      {
+        "id": 2,
+        "releaseDate": "Tue, 24 Dec 2024 00:00:00 GMT",
+        "title": "ggi uu kiguf"
+      }
+    ],
+    "name": "Gta de fff"
+  },
+  "success": true
+}
+```
+
+`DELETE '/movies/<int:id>'`
+
+- Delete a specific movie identified by its unique id.
+- URL Parameters:
+  - `id`: An integer representing the unique identifier of the movie to be deleted.
+- Returns: An object with the following keys:
+  - `success`: A boolean indicating the request status.
+  - `delete`: An id of the movie is deleted
+
+```json
+{
+  "delete": 1,
+  "success": true
+}
+```
+
+`DELETE '/actors/<int:id>'`
+
+- Delete a specific actor identified by its unique id.
+- URL Parameters:
+  - `id`: An integer representing the unique identifier of the actor to be deleted.
+- Returns: An object with the following keys:
+  - `success`: A boolean indicating the request status.
+  - `delete`: An id of the actor is deleted
+
+```json
+{
+  "delete": 1,
+  "success": true
+}
+```
+
+`POST '/movies/<int:id>'`
+
+- Retrieves a movie based on the payload Webapp rquest to.
+- Request Body: A JSON object containing:
+  - `id`: An integer representing the unique identifier of the actor to be deleted.
+- Returns: An object with the following keys:
+  - `success`: A boolean indicating the request status.
+  - `movie`: An object representing the selected question, containing `id`, `question`, `answer`, `category`, and `difficulty`.
+- Possible Responses:
+
+  - Returns a `404` status if no questions are found for the specified category or if the category does not exist.
+
+- Body
+
+```json
+{
+  "title": "iphone",
+  "releaseDate": "2024-12-23T18:10:28.596Z",
+  "idsActor": [
+    1,
+    3
+  ]
 }
 ```
