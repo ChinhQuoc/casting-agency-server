@@ -53,7 +53,14 @@ phases:
       - kubectl apply -f simple_jwt_api.yml
       - printf '[{"name":"simple_jwt_api","imageUri":"%s"}]' $REPOSITORY_URI:$TAG > build.json
 artifacts:
-  files: build.json
+  files:
+    - run.py
+    - requirements.txt
+    - app/**
+    - auth/**
+    - .env
+    - trust.json
+    - settings.py
 env:
   parameter-store:
     DB_NAME: DB_NAME
