@@ -170,6 +170,8 @@ python run.py
 - Returns: An object with the following keys:
   - `success`: A boolean indicating the request status.
   - `delete`: An id of the movie is deleted
+- Possible Responses:
+  - Returns a `404` status if the movie's id is not match any ids movie in the database.
 
 ```json
 {
@@ -186,6 +188,8 @@ python run.py
 - Returns: An object with the following keys:
   - `success`: A boolean indicating the request status.
   - `delete`: An id of the actor is deleted
+- Possible Responses:
+  - Returns a `404` status if the actor's id is not match any ids actor in the database.
 
 ```json
 {
@@ -194,17 +198,19 @@ python run.py
 }
 ```
 
-`POST '/movies/<int:id>'`
+`POST '/movies'`
 
-- Retrieves a movie based on the payload Webapp rquest to.
+- Create a movie based on the payload Webapp request to.
 - Request Body: A JSON object containing:
-  - `id`: An integer representing the unique identifier of the actor to be deleted.
+  - `title`: A string representing the title.
+  - `releaseDate`: A string representing the release date.
+  - `idsActor`: An array representing the ids actor.
 - Returns: An object with the following keys:
   - `success`: A boolean indicating the request status.
-  - `movie`: An object representing the selected question, containing `id`, `question`, `answer`, `category`, and `difficulty`.
+  - `movie`: An object representing the selected question, containing `id`, `title`, and `releaseDate`.
 - Possible Responses:
 
-  - Returns a `404` status if no questions are found for the specified category or if the category does not exist.
+  - Returns a `422` status if title or releaseDate isn't contained in body.
 
 - Body
 
@@ -212,9 +218,85 @@ python run.py
 {
   "title": "iphone",
   "releaseDate": "2024-12-23T18:10:28.596Z",
-  "idsActor": [
-    1,
-    3
-  ]
+  "idsActor": [1, 3]
+}
+```
+
+`POST '/actors'`
+
+- Create an actor based on the payload Webapp rquest to.
+- Request Body: A JSON object containing:
+  - `name`: A string representing the name.
+  - `age`: A number representing the age.
+  - `gender`: A number representing the gender.
+  - `idsMovie`: An array representing the ids movie.
+- Returns: An object with the following keys:
+  - `success`: A boolean indicating the request status.
+  - `movie`: An object representing the selected question, containing `id`, `name`, `age`, and `gender`.
+- Possible Responses:
+
+  - Returns a `422` status if name isn't contained in body.
+
+- Body
+
+```json
+{
+  "name": "test actor",
+  "age": 6,
+  "gender": "male",
+  "idsMovie": [1, 3]
+}
+```
+
+`PATCH '/movies/<int:id>'`
+
+- Update a specific movie identified by its unique id.
+- Request Body: A JSON object containing:
+  - `id`: A number representing the id.
+  - `releaseDate`: A string representing the releaseDate.
+  - `idsActor`: An array representing the ids actor.
+- Returns: An object with the following keys:
+  - `success`: A boolean indicating the request status.
+  - `movie`: An object representing the selected question, containing `title`, and `releaseDate`.
+- Possible Responses:
+
+  - Returns a `404` status if the movie's id is not match any ids movie in the database.
+  - Returns a `422` status if title or release isn't contained in body.
+
+- Body
+
+```json
+{
+  "title": "ggi uu kiguf",
+  "releaseDate": "2024-12-26T17:00:00.000Z",
+  "idsActor": [3, 4, 7, 8, 9, 10]
+}
+```
+
+`PATCH '/actors/<int:id>'`
+
+- Update a specific actor identified by its unique id.
+- Request Body: A JSON object containing:
+  - `name`: A string representing the name.
+  - `age`: A number representing the age.
+  - `gender`: A number representing the gender.
+  - `idsMovie`: An array representing the ids movie.
+- Returns: An object with the following keys:
+  - `success`: A boolean indicating the request status.
+  - `actor`: An object representing the selected question, containing `id`, `name`, `age`, and `gender`.
+- Possible Responses:
+
+  - Returns a `404` status if the actor's id is not match any ids actor in the database.
+  - Returns a `422` status if name isn't contained in body.
+
+- Body
+
+```json
+{
+  "id": 1,
+  "name": "test actor",
+  "age": 6,
+  "gender": "male",
+  "idsMovie": [1, 3]
 }
 ```

@@ -1,5 +1,5 @@
 import json
-from flask import request, abort
+from flask import request
 from functools import wraps
 from urllib.request import urlopen
 import jwt
@@ -54,7 +54,6 @@ def check_permissions(permission, payload):
 
 def check_permissions(permission, payload):
     if 'permissions' not in payload:
-        print(f"JWT payload: {payload}") 
         raise AuthError({
             'code': 'invalid_claims',
             'description': 'Permissions not included in JWT.'
@@ -116,7 +115,6 @@ def verify_decode_jwt(token):
                 'description': 'Incorrect claims. Please, check the audience and issuer.'
             }, 401)
         except Exception as e:
-            print(f"Invalid token: {str(e)}")
             raise AuthError({
                 'code': 'invalid_header',
                 'description': 'Unable to parse authentication token.'

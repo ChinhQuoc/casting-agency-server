@@ -1,15 +1,13 @@
 from app import app
-from flask import request, jsonify, abort, session, redirect
-from .models import Movie, Actor
+from flask import request, jsonify, abort
+from .models import Movie, Actor, db
 from auth.auth import requires_auth, AuthError
-from .settings import AUTH0_DOMAIN, CLIENT_ID, LOGOUT_REDIRECT_URI, BLACKLISTED_TOKENS
 
 # GET /actors and /movies
 @app.route('/movies', methods=['GET'])
 @requires_auth('get:movies')
 def get_movies(payload):
     movies = Movie.query.all()
-    print(movies)
     list_movie = [movie.get_data() for movie in movies]
 
     return jsonify({
@@ -72,9 +70,9 @@ def delete_movies(payload, id):
     
     try:
         movie.delete()
-    except:
-        movie.rollback()
-        abort(422)
+    except Exception as e:
+        db.session.rollback()
+        abort(422, description=str(e))
 
     return jsonify({
         'success': True,
@@ -91,9 +89,9 @@ def delete_actors(payload, id):
     
     try:
         actor.delete()
-    except:
-        actor.rollback()
-        abort(422)
+    except Exception as e:
+        db.session.rollback()
+        abort(422, description=str(e))
 
     return jsonify({
         'success': True,
@@ -119,9 +117,9 @@ def create_movie(payload):
         movie = Movie(title=new_title, release_date=new_release_date)
         movie.actors = actors
         movie.insert()
-    except:
-        movie.rollback()
-        abort(422)
+    except Exception as e:
+        db.session.rollback()
+        abort(422, description=str(e))
 
     return jsonify({
         'success': True,
@@ -147,9 +145,9 @@ def create_actor(payload):
         actor = Actor(name=new_name, age=new_age, gender=new_gender)
         actor.movies = movies
         actor.insert()
-    except:
-        actor.rollback()
-        abort(422)
+    except Exception as e:
+        db.session.rollback()
+        abort(422, description=str(e))
 
     return jsonify({
         'success': True,
@@ -166,18 +164,21 @@ def update_actor(payload, id):
         abort(404)
 
     body = request.get_json()
-    actor.name = body['name']
+    actor.name = body.get('name', None)
     actor.age = body['age']
     actor.gender = body['gender']
     movie_ids = body.get('idsMovie', [])
 
     try:
+        if not actor.name:
+            abort(400, description="Name is required")
+
         movies = Movie.query.filter(Movie.id.in_(movie_ids)).all()
         actor.movies = movies
         actor.update()
-    except:
-        actor.rollback()
-        abort(422)
+    except Exception as e:
+        db.session.rollback()
+        abort(422, description=str(e))
 
     return jsonify({
         'success': True,
@@ -193,39 +194,25 @@ def update_movie(payload, id):
         abort(404)
 
     body = request.get_json()
-    movie.title = body['title']
-    movie.release_date = body['releaseDate']
+    movie.title = body.get('title', None)
+    movie.release_date = body.get('releaseDate', None)
     actor_ids = body.get('idsActor', [])
 
     try:
+        if not movie.title or not movie.release_date:
+            abort(400, description="Title and release date are required")
+
         actors = Actor.query.filter(Actor.id.in_(actor_ids)).all()
         movie.actors = actors
         movie.update()
-    except:
-        movie.rollback()
-        abort(422)
+    except Exception as e:
+        db.session.rollback()
+        abort(422, description=str(e))
 
     return jsonify({
         'success': True,
         'movie': movie.get_data()
     })
-
-@app.route("/logout", methods=['POST'])
-def logout():
-    # Clear the user's session
-    session.clear()
-
-    # Redirect to Auth0 logout endpoint
-    return jsonify({
-        'success': True,
-        'logout': True
-    }), 200
-
-@app.route("/revoke", methods=['POST'])
-def revoke_token():
-    token = request.headers.get("Authorization").split(" ")[1]
-    BLACKLISTED_TOKENS.add(token)
-    return jsonify({"message": "Token has been revoked."}), 200
 
 # Error Handling
 @app.errorhandler(422)
@@ -268,5 +255,5 @@ def handle_auth_error(error):
     return jsonify({
         "success": False,
         "error": error.status_code,
-        "message": error.error['message']
+        "message": error.error['description']
     }), error.status_code
