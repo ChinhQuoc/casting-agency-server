@@ -1,10 +1,11 @@
 from flask_sqlalchemy import SQLAlchemy
-from .settings import DB_NAME, DB_USER, DB_PASSWORD
+from .settings import DB_NAME, DB_USER, DB_PASSWORD, DB_HOST
 
 database_name = DB_NAME
 database_user = DB_USER
 database_password = DB_PASSWORD
-database_path = 'postgresql://{}:{}@{}/{}'.format(database_user, database_password, 'localhost:5432', database_name)
+database_host = DB_HOST
+database_path = 'postgresql://{}:{}@{}/{}?sslmode=require'.format(database_user, database_password, database_host, database_name)
 
 db = SQLAlchemy()
 
