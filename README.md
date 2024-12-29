@@ -31,7 +31,7 @@ psql casting_agency < casting_agency.psql
 On the folder project, Open terminal and run:
 
 ```bash
-python run.py
+python app.py
 ```
 
 ## Documenting your Endpoints
