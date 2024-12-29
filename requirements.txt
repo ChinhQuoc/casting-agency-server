@@ -29,7 +29,7 @@ pathspec==0.12.1
 platformdirs==4.2.2
 pluggy==1.5.0
 postgres==4.0
-psycopg2==2.9.10
+psycopg2-binary==2.9.10
 py==1.11.0
 pycparser==2.22
 PyJWT==2.10.1
